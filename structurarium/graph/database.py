@@ -120,7 +120,7 @@ def main():
     print 'Running on %s:%s' % (args.host, args.port)
     while True:
         connection = listener.accept()
-        connection = cPickle.dumps(reduce_connection(connection))
+        connection = reduce_connection(connection)
         database.process(connection)
         pool.apply_async(process, [database, connection])
 

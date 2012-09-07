@@ -11,7 +11,7 @@ class Base(object):
         return self._path
 
     def process(self, connection):
-        (func, args) = cPickle.loads(connection)
+        (func, args) = connection
         self.connection = func(*args)
 
     def recv(self):
