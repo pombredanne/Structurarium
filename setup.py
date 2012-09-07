@@ -9,8 +9,11 @@ from setuptools.command.test import test as TestCommand
 def long_description():
     path = os.path.dirname(__file__)
     path = os.path.join(path, 'README.rst')
-    with open(path) as f:
-        return f.read()
+    try:
+        with open(path) as f:
+            return f.read()
+    except:
+        return ''
 
 
 __doc__ = long_description()
