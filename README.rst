@@ -12,8 +12,8 @@ Here is the list of available databases:
   - *structurarium.taskqueue*: Also known as the persistent set. ``add`` a document,
                           ``pop`` it later.
   - *structurarium.graph*: A presistent database supported by a graph
-                           datastructure similar to `Neo4j <http://neo4j.org/>`
-                           or `OrientDB <http://www.orientechnologies.com/>`.
+                           datastructure similar to `Neo4j <http://neo4j.org/>`_
+                           or `OrientDB <http://www.orientechnologies.com/>`_.
 
 
 Getting started
