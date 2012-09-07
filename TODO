@@ -1,0 +1,5 @@
+- cache **replace the mock cache in graphdb**
+- bloom filters
+- journaling
+- binary search tree
+- hashmap [to test]

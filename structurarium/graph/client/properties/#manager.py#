@@ -1,0 +1,65 @@
+
+
+class ReferenceManager(BasePropertyManager):
+
+    @staticmethod
+    def wrap(value, db):
+        if not isinstance(value, basestring):
+            identifier = value.identifier
+        else:
+            identifier = value
+        return db[Identifier].wrap(identifier, db)
+
+    @staticmethod
+    def unwrap(value, db):
+        return db[Identifier].unwrap(value, db)
+
+
+class ReferenceListManager(BasePropertyManager):
+
+    @staticmethod
+    def wrap(value, db):
+        def gen():
+            if not value:
+                raise StopIteration()
+            for item in value:
+                if isinstance(item, basestring):
+                    yield item
+                else:
+                    yield item.identifier
+        return list(gen())
+
+    @staticmethod
+    def unwrap(value, db):
+        if not value:
+            return []
+        else:
+            return value
+
+
+base = dict()
+
+base[BasePropertyManager] = BasePropertyManager()
+base[String] = StringManager()
+base[Integer] = BasePropertyManager()
+base[Boolean] = BooleanManager()
+base[DateTime] = DateTimeManager()
+base[Float] = BasePropertyManager()
+base[List] = ListManager()
+base[Dict] = DictManager()
+base[Reference] = ReferenceManager()
+
+
+graphitidb = dict()
+
+graphitidb[BasePropertyManager] = BasePropertyManager()
+graphitidb[Identifier] = StringManager()
+graphitidb[String] = StringManager()
+graphitidb[Integer] = BasePropertyManager()
+graphitidb[Boolean] = BooleanManager()
+graphitidb[DateTime] = DateTimeManager()
+graphitidb[Float] = BasePropertyManager()
+graphitidb[List] = ListManager()
+graphitidb[Dict] = DictManager()
+graphitidb[Reference] = ReferenceManager()
+graphitidb[ReferenceList] = ReferenceListManager()
