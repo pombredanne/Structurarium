@@ -22,7 +22,7 @@ Getting started
 ::
 
   ~ pip install Structurarium
-  ~ structurarium.graph --host 127.0.0.1 --port 8000
+  ~ structurarium.graph  127.0.0.1 8000 /tmp
 
 In a Python REPL::
 
