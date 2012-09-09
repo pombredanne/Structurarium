@@ -4,7 +4,7 @@ from structurarium.utils import dumps
 from structurarium.utils import loads
 
 
-class Queue(object):
+class Set(object):
 
     def __init__(self, name, database, lock):
         self.name = name
