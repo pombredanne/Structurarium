@@ -12,7 +12,7 @@ from properties import Boolean
 from properties import Float
 from properties import List
 from properties import Dict
-from properties import DateTime
+from properties import Datetime
 from properties import Reference
 
 from exception import DatabaseException
@@ -29,7 +29,7 @@ class Graph(object):
     ORMQueryClass = ORMQuery
 
     Reference = Reference
-    DateTime = DateTime
+    DateTime = Datetime
     Integer = Integer
     Boolean = Boolean
     String = String
