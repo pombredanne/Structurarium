@@ -71,10 +71,10 @@ class Boolean(BaseProperty):
         return True if value else False
 
 
-class DateTime(Integer):
+class Datetime(Integer):
 
     def __init__(self, auto_now_add=False, auto_now=False):
-        super(DateTime, self).__init__()
+        super(Datetime, self).__init__()
 
         self.auto_now_add = auto_now_add
         self.auto_now = auto_now
@@ -86,7 +86,7 @@ class DateTime(Integer):
         return int(mktime(value.timetuple()))
 
     def wrap(self, object):
-        value = super(DateTime, self).wrap(object)
+        value = super(Datetime, self).wrap(object)
         if self.auto_now_add:
             if value is None:
                 value = datetime.now()
@@ -95,6 +95,7 @@ class DateTime(Integer):
             value = datetime.now()
             self.__set__(object, value)
         return self.mktime(value) if value else None
+
 
 class Float(BaseProperty):
     initial_value = float
