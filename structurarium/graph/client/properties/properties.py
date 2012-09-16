@@ -66,8 +66,8 @@ class Integer(BaseProperty):
 class Boolean(BaseProperty):
     initial_value = bool
 
-    def wrap(self):
-        value = super(Boolean, self.wrap())
+    def wrap(self, value):
+        value = super(Boolean, self).wrap(value)
         return True if value else False
 
 
@@ -80,7 +80,10 @@ class Datetime(Integer):
         self.auto_now = auto_now
 
     def unwrap(self, value):
-        return datetime.fromtimestamp(value)
+        if value:
+            return datetime.fromtimestamp(value)
+        else:
+            return None
 
     def mktime(self, value):
         return int(mktime(value.timetuple()))

@@ -121,7 +121,6 @@ def main():
     while True:
         connection = listener.accept()
         connection = reduce_connection(connection)
-        database.process(connection)
         pool.apply_async(process, [database, connection])
 
 
