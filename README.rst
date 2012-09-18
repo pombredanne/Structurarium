@@ -1,6 +1,8 @@
 Structurarium
 -------------
 
+**This is under developpement use it at your own risks**
+
 Structurarium is a set of networked databases written in Python
 
 Here is the list of available databases:
@@ -46,39 +48,40 @@ all connected::
   >>> link = db.Edge(bleu, machine_translation)
   >>> link.save()
 
-You can load edges and vertices with ``db.load``::
+You can get edges and vertices with ``db.get(identifier)``::
 
-  >>> loaded_bleu = db.load(bleu.identifier)
+  >>> bleu = db.get(bleu.identifier)
 
-Loads an element with the element with ``bleu.identifier`` as identifier. The
-same method can be used for both edge and vertex loading.
+Fetch the element with ``bleu.identifier`` as identifier. The
+same method can be used for both edge and vertex.
 
 Then you have access to 4 kinds of queries:
 
  - ``query()`` will start a query starting from this element
- - ``outgoings()`` will query outgoing edges
- - ``incomings()`` will query incoming edges
+ - ``outgoings()`` will query outgoing edges on vertex
+ - ``incomings()`` will query incoming edges on vertex
 
-The following example query for the edge outgoing ``bleu``::
+The following example query for the edge outgoing from ``bleu``::
 
-  >>> loaded_link = loaded_bleu.outgoings().object()
+  >>> link = bleu.outgoings().object()
 
-Every query should end with ``object()`` or ``objects()`` depending if you
-want one object or several.
+Every query should end with ``object()`` or ``objects()`` depending 
+whether you want one object or several.
 
 You can fetch both ends of the link, this triggers a new query:
 
-  >>> loaded_machine_translation = loaded_link.end()
+  >>> machine_translation = link.end()
 
 The same can be achieved with a chained query::
 
-  >>> loaded_link = loaded_bleu.outgoings().end().object()
+  >>> link = bleu.outgoings().end().object()
 
 It's also possible to get and set properties on the elements::
 
   >>> link.kind = 'hyperlink'
-  >>> loaded_link = loaded_bleu.outgoings().object()
-  >>> loaded.kind
+  >>> link.save()
+  >>> link = bleu.outgoings().object()
+  >>> link.kind
   'hyperlink'
 
 Don't forget to have a look at the documentation.
