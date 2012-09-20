@@ -1,6 +1,3 @@
-from structurarium.utils import loads
-
-
 class Element(object):
 
     def __init__(self, graph, identifier, data):
@@ -81,7 +78,6 @@ class Query(object):
 
     @classmethod
     def parse(cls, value):
-        value = loads(value)
         graph = cls(value['identifier'])
         for vertice in value['vertices']:
             identifier = vertice.pop('__identifier__')

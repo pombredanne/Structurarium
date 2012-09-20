@@ -1,5 +1,3 @@
-import msgpack
-
 import os
 import hashlib
 
@@ -255,7 +253,7 @@ class GraphQuery(Graph):
             'edges': edges,
             'identifier': self._identifier,
         }
-        return msgpack.dumps(graph, encoding='utf-8')
+        return graph
 
     def iter(self):
         operator = self.root

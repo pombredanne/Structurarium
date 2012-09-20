@@ -1,34 +1,21 @@
 #!/usr/bin/env python
-import os
-import cPickle
 import argparse
 import traceback
 
 from multiprocessing import Pool
-from multiprocessing import Manager
 from multiprocessing.connection import Listener
 from multiprocessing.reduction import reduce_connection
+
+from persistent.dict import PersistentDict
+import transaction
 
 from structurarium import __version__
 from structurarium.utils import _setproctitle
 from structurarium.base import Base
-from structurarium.exceptions import ElementNotFound
-from structurarium.repositories.queue import Queue
 
-from edge import Edge
-from cache import Cache
+from processing import process
+
 from query import Query
-from vertex import Vertex
-from txn import Transaction
-
-
-class IntegerQueue(Queue):
-
-    def maximum(self):
-        m = None
-        for timestamp in self:
-            m = max(m, timestamp)
-        return m
 
 
 class Graph(Base):
@@ -36,64 +23,37 @@ class Graph(Base):
     def __init__(self, path, authkey):
         super(Graph, self).__init__(path, authkey)
 
-        self.authkey = authkey
-
-        manager = Manager()
-        self.current_timestamps = manager.list()
-
-        if not os.path.exists(path):
-            os.mkdir(path)
-        if not os.path.exists(os.path.join(path, 'Edge')):
-            os.mkdir(os.path.join(path, 'Edge'))
-        if not os.path.exists(os.path.join(path, 'Vertex')):
-            os.mkdir(os.path.join(path, 'Vertex'))
-
-        self.timestamps = IntegerQueue(
-            'timestamps',
-            self,
-            manager.Lock()
-        )
-
-        self.cache = Cache()
-
-    def load(self, txn, identifier):
-        try:
-            element = Vertex.load(txn, identifier)
-        except ElementNotFound:
-            element = Edge.load(txn, identifier)
-            return element
-        else:
-            return element
+        cnx = self.open()
+        root = cnx.root()
+        if 'Vertex' not in root:
+            root['Vertex'] = PersistentDict()
+            root['Edge'] = PersistentDict()
+            transaction.commit()
 
     def process(self, connection):
         super(Graph, self).process(connection)
         query = self.recv()
         query = Query.parse(query)
-        timestamps = list(self.current_timestamps)
-        maximum = self.timestamps.maximum()
-        txn = Transaction(
-            self,
-            query,
-            maximum,
-            timestamps,
-        )
-        self.current_timestamps.append(txn.ts())
+        cnx = self.open()
+        root = cnx.root()
         try:
-            result = txn.commit()
+            result = list(process(query, root))
         except Exception:
+            transaction.abort()
+            cnx.close()
             self.send({
                 'type': 'exception',
                 'data': traceback.format_exc()
             })
         else:
+            transaction.commit()
             self.send({'type': 'result', 'data': result})
-        finally:
-            self.current_timestamps.remove(txn.ts())
+            cnx.close()
 
 
 # function to circuvent the fact that pickled objects should
 # be importable
-def process(database, connection):
+def connect(database, connection):
     database.process(connection)
 
 
@@ -121,8 +81,8 @@ def main():
     while True:
         connection = listener.accept()
         connection = reduce_connection(connection)
-        pool.apply_async(process, [database, connection])
-
+        # pool.apply_async(connect, [database, connection])
+        connect(database, connection)
 
 if __name__ == '__main__':
     main()
